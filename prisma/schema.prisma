@@ -1,0 +1,120 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum JobStatus {
+  DISCOVERED
+  REVIEWING
+  SAVED
+  APPLYING
+  APPLIED
+  INTERVIEW
+  OFFER
+  REJECTED
+  WITHDRAWN
+  ARCHIVED
+}
+
+enum Recommendation {
+  APPLY
+  CONSIDER
+  SKIP
+}
+
+enum WorkMode {
+  ONSITE
+  HYBRID
+  REMOTE
+  UNKNOWN
+}
+
+model CandidateProfile {
+  id                String   @id @default(cuid())
+  name              String
+  homeLocation      String   @default("Coventry, UK")
+  currentTitle      String
+  currentSalary     Int?
+  minimumSalary     Int?
+  targetTitles      String[]
+  skills            String[]
+  careerGoals       String[]
+  cvText            String   @db.Text
+  maxCommuteMinutes Int      @default(75)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model Job {
+  id           String         @id @default(cuid())
+  externalId   String?
+  source       String
+  sourceUrl    String
+  title        String
+  company      String
+  location     String
+  workMode     WorkMode       @default(UNKNOWN)
+  salaryMin    Int?
+  salaryMax    Int?
+  description  String         @db.Text
+  requirements String[]
+  discoveredAt DateTime       @default(now())
+  closesAt     DateTime?
+  status       JobStatus      @default(DISCOVERED)
+  fingerprint  String         @unique
+  analysis     JobAnalysis?
+  activities   Activity[]
+  application  Application?
+
+  @@index([status, discoveredAt])
+  @@index([company, title])
+}
+
+model JobAnalysis {
+  id             String         @id @default(cuid())
+  jobId          String         @unique
+  job            Job            @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  overallScore   Int
+  skillsScore    Int
+  careerScore    Int
+  salaryScore    Int
+  locationScore  Int
+  confidence     Int
+  recommendation Recommendation
+  matchedSkills  String[]
+  missingSkills  String[]
+  strengths      String[]
+  concerns       String[]
+  reasoning      String         @db.Text
+  createdAt      DateTime       @default(now())
+
+  @@index([recommendation, overallScore])
+}
+
+model Application {
+  id              String   @id @default(cuid())
+  jobId           String   @unique
+  job             Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  tailoredSummary String?  @db.Text
+  coverLetter     String?  @db.Text
+  tailoredCv      String?  @db.Text
+  appliedAt       DateTime?
+  nextActionAt    DateTime?
+  notes           String?  @db.Text
+  updatedAt       DateTime @updatedAt
+}
+
+model Activity {
+  id        String   @id @default(cuid())
+  jobId     String
+  job       Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  type      String
+  detail    String
+  createdAt DateTime @default(now())
+
+  @@index([jobId, createdAt])
+}
