@@ -4,8 +4,26 @@ export const candidateProfile = {
   currentRole: "Onsite Technical Manager",
   currentEmployer: "LiveBuzz",
   currentSalary: 33475,
-  minimumSalary: 38000,
-  targetTitles: ["Cloud Support Engineer", "Infrastructure Engineer", "Azure Administrator", "Systems Engineer", "IT Operations Lead"],
+  salaryRules: {
+    preferred: 40000,
+    standardMinimum: 38000,
+    progressionExceptionMinimum: 35000,
+    londonHybridMinimum: 42000,
+    absoluteMinimum: 33475,
+  },
+  targetTitles: [
+    "Cloud Support Engineer",
+    "Infrastructure Engineer",
+    "Systems Engineer",
+    "Azure Administrator",
+    "Cloud Administrator",
+    "Microsoft 365 Engineer",
+    "Modern Workplace Engineer",
+    "IT Operations Engineer",
+    "Technical Operations Lead",
+    "Junior Cloud Engineer",
+  ],
+  stretchTitles: ["Cloud Engineer", "IT Operations Lead"],
   skills: ["Azure", "Entra ID", "Microsoft 365", "Windows Server", "VMware", "Intune", "Networking", "Python", "Terraform", "GitHub Actions", "Docker", "FastAPI", "React"],
   careerGoals: ["cloud administration", "infrastructure", "technical leadership", "larger complex environments", "Azure"],
   experience: [
@@ -14,7 +32,19 @@ export const candidateProfile = {
     { role: "Service Desk 1st Line Support", employer: "Flooid", period: "2019 – 2021", summary: "Delivered frontline technical support, incident diagnosis, escalation and customer communication." },
   ],
   certifications: ["DataCamp AI Engineer for Developers Associate"],
-  preferences: { maxCommuteMinutes: 75, workModes: ["Hybrid", "Remote", "Onsite within range"], requiresProgression: true },
+  preferences: {
+    maxCommuteMinutes: 75,
+    workModes: ["Hybrid", "Remote", "Onsite within range"],
+    londonMaxOfficeDaysPerWeek: 2,
+    requiresProgression: true,
+  },
+  skipRules: [
+    "First-line service desk roles",
+    "Roles paying below the current salary",
+    "Roles without cloud, infrastructure or leadership progression",
+    "London roles requiring more than two office days per week",
+    "Short contracts or roles with unclear rates",
+  ],
 } as const;
 
 export type CandidateProfile = typeof candidateProfile;
