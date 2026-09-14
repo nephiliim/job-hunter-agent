@@ -10,6 +10,8 @@ const requestSchema = z.object({
     salaryMax: z.number().nullable().optional(),
     description: z.string(),
     requirements: z.array(z.string()).optional(),
+    officeDaysPerWeek: z.number().min(0).max(7).nullable().optional(),
+    employmentType: z.string().nullable().optional(),
   }),
   candidate: z.object({
     skills: z.array(z.string()),
